@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--<mapper namespace="org.mybatis.example.BlogMapper">-->
+<mapper namespace="com.simba.mapper.UserMapper">
+
+    <select id="queryUserAll" resultType="User">
+        select *from yingshipinglun
+    </select>
+
+    <select id="queryUserById" resultType="User">
+        select *from yingshipinglun where title like '%${title}%'
+    </select>
+
+
+    <insert id="addUser" parameterType="user">
+        insert  INTO yingshipinglun (title,des) VALUES  (#{title},#{des})
+    </insert>
+
+</mapper>
