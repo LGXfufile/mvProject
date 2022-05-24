@@ -60,11 +60,9 @@ public class FileDataOpesImpl implements FileDataOpes {
                     System.out.println(absolutePath);
                     String fileEncode = EncodingDetect.getJavaEncode(absolutePath);
                     System.out.println("该文件编码是： "+fileEncode);
-                    if ("GB2312".equals(fileEncode)) {
+                    if (!"UTF-8".equals(fileEncode)) {
 //          调用转码方法
-                        convertCharset(absolutePath, Charset.forName("GB2312"), Charset.forName("UTF-8"), null);
-                    }else if ("GBK".equals(fileEncode)){
-                        convertCharset(absolutePath, Charset.forName("GBK"), Charset.forName("UTF-8"), null);
+                        convertCharset(absolutePath, Charset.forName(fileEncode), Charset.forName("UTF-8"), null);
                     }
                     fileEndWithTxtInsertTool(fs);
                 } else if (fileName.endsWith(".docx")) {
