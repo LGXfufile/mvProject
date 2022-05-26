@@ -86,26 +86,6 @@ public class FileDataOpesImpl implements FileDataOpes {
         FileUtil.convertCharset(file, fromCharset, toCharset);
     }
 
-    private void saveAsUTF8(String absolutePath) throws IOException {
-        BufferedReader br = null;
-        BufferedWriter bw = null;
-        br = new BufferedReader(new InputStreamReader(new FileInputStream(absolutePath), "UTF-8"));
-        bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(absolutePath), "UTF-8"));
-        int i = 0;
-        String str = "";
-        while ((str = br.readLine()) != null) {
-            if (i == 0)//读取第一行，将前三个字节去掉，重新new个String对象
-            {
-                byte[] bytes = str.getBytes("UTF-8");
-                str = new String(bytes, 3, bytes.length - 3);
-                bw.write(str+"\r\n");
-                i++;
-            } else
-                bw.write(str+"\r\n");
-        }
-        br.close();
-        bw.close();
-    }
 
 
     private void fileEndWithTxtInsertTool(File fs) throws IOException {
