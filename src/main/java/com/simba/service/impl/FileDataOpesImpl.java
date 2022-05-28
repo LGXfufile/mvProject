@@ -87,6 +87,11 @@ public class FileDataOpesImpl implements FileDataOpes {
     }
 
 
+    /**
+     *  如果文件后缀名是txt，插入数据库工具
+     * @param fs
+     * @throws IOException
+     */
 
     private void fileEndWithTxtInsertTool(File fs) throws IOException {
         StringBuilder result = new StringBuilder();
