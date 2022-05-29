@@ -16,6 +16,7 @@ import com.simba.mapper.UserMapper;
 import com.simba.pojo.User;
 import com.simba.service.FileDataOpes;
 import com.simba.tools.EncodingDetect;
+import com.simba.tools.FormatDate;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class FileDataOpesImpl implements FileDataOpes {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    FormatDate formatDate;
     int countOfTxt = 0;
     int countOfDocx = 0;
 
@@ -105,11 +109,7 @@ public class FileDataOpesImpl implements FileDataOpes {
         String fileName = fs.getName();
         int indexOf = fileName.lastIndexOf(".");
         String fileNothouzhui = fileName.substring(0, indexOf);
-        Date now = new Date();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式(年-月-日-时-分-秒)
-
-        String createTime = dateFormat.format(now);//格式化然后放入字符串中
+        String createTime = formatDate.dateFormatOfNow();
         User user = new User( countOfTxt,fileNothouzhui, result.toString(),createTime);
         System.out.println(user.toString());
         if (userMapper.addUser(user)) {
@@ -134,11 +134,7 @@ public class FileDataOpesImpl implements FileDataOpes {
 //                        System.out.println(context);
         int indexof = srcFile.getName().lastIndexOf(".");
         String fileNothouzhui = srcFile.getName().substring(0,indexof);
-        Date now = new Date();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式(年-月-日-时-分-秒)
-
-        String createTime = dateFormat.format(now);//格式化然后放入字符串中
+        String createTime = formatDate.dateFormatOfNow();
         User user = new User(countOfDocx,fileNothouzhui, context,createTime);
         if (userMapper.addUser(user)) {
             System.out.println("插入成功:" + countOfDocx);
