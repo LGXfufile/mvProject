@@ -15,7 +15,7 @@
 
 
     <insert id="addUser" parameterType="user">
-        insert  INTO yingshipinglun (title,des) VALUES  (#{title},#{des})
+        insert  INTO yingshipinglun (title,des,create_time) VALUES  (#{title},#{des},#{create_time})
     </insert>
 
 </mapper>

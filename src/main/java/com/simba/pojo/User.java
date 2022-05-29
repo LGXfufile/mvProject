@@ -12,4 +12,6 @@ public class User {
     private String title;
     private String des;
 
+    private String create_time;
+
 }
