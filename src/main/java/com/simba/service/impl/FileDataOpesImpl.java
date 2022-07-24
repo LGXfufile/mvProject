@@ -17,6 +17,8 @@ import com.simba.pojo.User;
 import com.simba.service.FileDataOpes;
 import com.simba.tools.EncodingDetect;
 import com.simba.tools.FormatDate;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class FileDataOpesImpl implements FileDataOpes {
 
 //    @Autowired
@@ -159,10 +160,10 @@ public class FileDataOpesImpl implements FileDataOpes {
 
         if (!cacheMaps.containsKey("users")){
             users = userMapper.queryUserAll();
-            System.out.println("走数据库");
+            log.info("走数据库");
             cacheMaps.put("users",users);
         }else {
-            System.out.println("走缓存");
+            log.info("走缓存");
             users = cacheMaps.get("users");
         }
         return users;
