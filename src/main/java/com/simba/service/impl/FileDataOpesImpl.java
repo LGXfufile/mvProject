@@ -22,6 +22,7 @@ import lombok.extern.slf4j.XSlf4j;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -154,18 +155,21 @@ public class FileDataOpesImpl implements FileDataOpes {
         return users;
     }
     @Override
+    @Cacheable(value = "users")
     public List<User> queryUserAll () {
 
-        List<User> users;
-
-        if (!cacheMaps.containsKey("users")){
-            users = userMapper.queryUserAll();
-            log.info("走数据库");
-            cacheMaps.put("users",users);
-        }else {
-            log.info("走缓存");
-            users = cacheMaps.get("users");
-        }
+//        List<User> users;
+//
+//        if (!cacheMaps.containsKey("users")){
+//            users = userMapper.queryUserAll();
+//            log.info("走数据库");
+//            cacheMaps.put("users",users);
+//        }else {
+//            log.info("走缓存");
+//            users = cacheMaps.get("users");
+//        }
+        List<User> users = userMapper.queryUserAll();
+        log.info("查数据库");
         return users;
     }
 }
