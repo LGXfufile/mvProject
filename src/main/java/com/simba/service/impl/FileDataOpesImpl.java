@@ -26,7 +26,9 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FileDataOpesImpl implements FileDataOpes {
@@ -41,6 +43,8 @@ public class FileDataOpesImpl implements FileDataOpes {
     FormatDate formatDate;
     int countOfTxt = 0;
     int countOfDocx = 0;
+
+    private static final Map<String,List<User>> cacheMaps = new HashMap<>();
 
 
     @Override
@@ -151,7 +155,16 @@ public class FileDataOpesImpl implements FileDataOpes {
     @Override
     public List<User> queryUserAll () {
 
-        List<User> users = userMapper.queryUserAll();
+        List<User> users;
+
+        if (!cacheMaps.containsKey("users")){
+            users = userMapper.queryUserAll();
+            System.out.println("走数据库");
+            cacheMaps.put("users",users);
+        }else {
+            System.out.println("走缓存");
+            users = cacheMaps.get("users");
+        }
         return users;
     }
 }
