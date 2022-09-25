@@ -23,6 +23,29 @@
 <!--            <version>2.4</version>-->
 <!--        </dependency>-->
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.67</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hynnet</groupId>
+            <artifactId>jacob</artifactId>
+            <version>1.18</version>
+        </dependency>
+        <!--语音转写 SDK-->
+        <dependency>
+            <groupId>com.iflytek.msp.lfasr</groupId>
+            <artifactId>lfasr-sdk</artifactId>
+            <version>3.0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/lfasr-sdk-3.0.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.5</version>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>

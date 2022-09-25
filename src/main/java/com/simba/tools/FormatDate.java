@@ -13,10 +13,16 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 @Service
 public class FormatDate {
 
-    public String dateFormatOfNow(){
+    /**
+     * 格式化输出当时时间，年月日，时分秒
+     *
+     * @return
+     */
+    public String dateFormatOfNow() {
         Date now = new Date();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式(年-月-日-时-分-秒)

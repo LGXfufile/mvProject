@@ -9,7 +9,6 @@ package com.simba.controller;
 @常用快捷键 代码格式化 【CTRL+ALT+L】
 */
 
-
 import com.simba.bean.YingShi;
 import com.simba.pojo.User;
 import com.simba.service.FileDataOpes;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -151,6 +149,4 @@ public class Hello {
         map.put("code","sucess");
         return map;
     }
-
-
 }
