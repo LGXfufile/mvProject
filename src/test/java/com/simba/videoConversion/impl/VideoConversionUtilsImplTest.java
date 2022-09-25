@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 @Slf4j
 class VideoConversionUtilsImplTest {
 
-    private final static String INPUTPATH = "src/main/resources/videos/840946180-1-208.mp4";
+    private final static String INPUTPATH = "src/main/resources/videos/471770854-1-208.mp4";
 
     @Test
     public void VideoToMusic() throws Exception {
