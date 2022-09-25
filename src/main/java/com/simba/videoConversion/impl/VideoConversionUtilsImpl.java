@@ -67,21 +67,22 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
 
         //3、查看转写进度
         int status = 0;
+        String returnResult = "";
         while (status != 9) {
             Message message = lfasrClient.getProgress(taskId);
             JSONObject object = JSON.parseObject(message.getData());
-            if (object == null)
-                throw new LfasrException(message.toString());
-            status = object.getInteger("status");
-            System.out.println(message.getData());
-            TimeUnit.SECONDS.sleep(2);
+            if (object != null){
+                status = object.getInteger("status");
+                System.out.println(message.getData());
+                TimeUnit.SECONDS.sleep(2);
+            }
         }
         //4、获取结果
         Message result = lfasrClient.getResult(taskId);
         String data = result.getData();
 
         final JSONArray array = JSONArray.parseArray(data);
-        final StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
         final StringBuffer buffer1 = new StringBuffer();
         buffer1.append(",");
         buffer1.append(".");
@@ -107,15 +108,12 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
             }
 
         }
-
-        //语音播报功能
-//        TextToSpeech.textToSpeech("主人，转写任务结束");
-
+        returnResult = buffer.toString();
         log.info("音频转文字任务结束,输入,{},输出,\n{}", INPUTMUSICPATH, buffer.toString());
         //退出程序，关闭线程资源，仅在测试main方法时使用。
         System.exit(0);
-
-        return buffer.toString();
+        log.info("返回了吗？");
+        return returnResult;
 
     }
 

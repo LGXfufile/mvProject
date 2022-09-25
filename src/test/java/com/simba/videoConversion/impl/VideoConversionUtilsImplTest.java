@@ -1,19 +1,14 @@
 package com.simba.videoConversion.impl;
 
 
-import cn.hutool.json.JSONUtil;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-
 import com.alibaba.fastjson.JSONObject;
-import com.simba.videoConversion.VideoConversionUtils;
+import com.simba.tools.TextToSpeech;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.geometry.spherical.oned.S1Point;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 /*
@@ -27,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class VideoConversionUtilsImplTest {
 
-    private final static String INPUTPATH =  "src/main/resources/videos/840946180-1-208.mp4";
+    private final static String INPUTPATH = "src/main/resources/videos/840946180-1-208.mp4";
 //
 //    @Autowired
 //    VideoConversionUtils videoConversionUtils;
@@ -36,10 +31,8 @@ class VideoConversionUtilsImplTest {
     public void VideoToMusic() throws Exception {
         final VideoConversionUtilsImpl videoConversionUtils = new VideoConversionUtilsImpl();
         final String outMusicPath = videoConversionUtils.videoToMusic(INPUTPATH);
-
-
-        final String s = videoConversionUtils.musicToText(outMusicPath);
-        log.info("输出结果,{}",s);
+        TextToSpeech.textToSpeech("恭喜老板，任务完成啦~~~好开心");
+        Assert.assertNotNull(outMusicPath);
     }
 
     @Test
@@ -47,49 +40,21 @@ class VideoConversionUtilsImplTest {
         final VideoConversionUtilsImpl videoConversionUtils = new VideoConversionUtilsImpl();
         String inputMusicPath = "src/main/resources/audio/1c75f9cb.m4a";
         final String s = videoConversionUtils.musicToText(inputMusicPath);
-        log.info("输出结果,{}",s);
+        log.info("输出结果,{}", s);
+        TextToSpeech.textToSpeech("恭喜老板，任务完成");
     }
 
+    /**
+     * 语音播报测试；
+     * 问题解决参考：
+     * https://blog.csdn.net/hodge11/article/details/109527129
+     */
     @Test
-    public void aaa(){
-        String aa = "[ {\n" +
-                "        \"bg\":\"15680\",\n" +
-                "        \"ed\":\"17440\",\n" +
-                "        \"onebest\":\"长夏逝去，\",\n" +
-                "        \"speaker\":\"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"bg\":\"17440\",\n" +
-                "        \"ed\":\"18710\",\n" +
-                "        \"onebest\":\"杨秋悄然。\",\n" +
-                "        \"speaker\":\"0\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "        \"bg\":\"18960\",\n" +
-                "        \"ed\":\"22640\",\n" +
-                "        \"onebest\":\"秋天是人们心中最美的季节，\",\n" +
-                "        \"speaker\":\"0\"\n" +
-                "    }]";
-//        log.info(aa);
-        final String s = JSON.toJSONString(aa);
-        final JSONArray array = JSONArray.parseArray(aa);
-        final StringBuffer buffer = new StringBuffer();
-
-
-
-
-
-        for (int i = 0; i < array.size(); i++) {
-
-            final String s1 = array.get(i).toString();
-            System.out.println(s1);
-
-            final JSONObject jsonObject = JSON.parseObject(s1);
-            String onebest = jsonObject.get("onebest").toString();
-            onebest+=",";
-            buffer.append(onebest);
+    public void yuyinBobaoTest() {
+        try {
+            TextToSpeech.textToSpeech("恭喜老板，任务完成");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        System.out.println(buffer.toString());
-
     }
 }
