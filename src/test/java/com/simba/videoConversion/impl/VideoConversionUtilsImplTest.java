@@ -1,15 +1,9 @@
 package com.simba.videoConversion.impl;
 
-
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.simba.tools.TextToSpeech;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-
 
 /*
 @Date 2022/9/25 11:40
@@ -23,9 +17,6 @@ import org.junit.jupiter.api.Test;
 class VideoConversionUtilsImplTest {
 
     private final static String INPUTPATH = "src/main/resources/videos/840946180-1-208.mp4";
-//
-//    @Autowired
-//    VideoConversionUtils videoConversionUtils;
 
     @Test
     public void VideoToMusic() throws Exception {
