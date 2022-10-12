@@ -35,7 +35,6 @@ public class VideoController {
         FileInputStream fis = null;
         FileOutputStream fos = null;
         System.out.println(originalFilename);
-
         final byte[] bytes = new byte[1024];
         try {
             String absolutePath = FILE_PATH + originalFilename;
