@@ -15,11 +15,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.iflytek.msp.lfasr.LfasrClient;
 import com.iflytek.msp.lfasr.model.Message;
+import com.simba.bean.ConvertInfo;
 import com.simba.service.VideoConversionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MultiValuedMap;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ConcurrentReferenceHashMap;
+
+import javax.annotation.Resource;
 import java.io.IOException;
 
 import java.util.*;
@@ -28,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class VideoConversionUtilsImpl implements VideoConversionUtils {
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     private final static String FFMPEGPATH = "E:\\Download\\ffmpeg.exe";
 
@@ -38,7 +46,7 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
     private static final String APP_ID = "8c366cf9";
     private static final String SECRET_KEY = "3f6c57ab3d3dbe172cb3b29d30e4d035";
 
-    public static final Map<ClassLoader, MultiValuedMap<String,String>> cathe =
+    public static final Map<ClassLoader, MultiValuedMap<String, String>> cathe =
             new ConcurrentReferenceHashMap<>();
 
     /**
@@ -48,20 +56,10 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
      */
     @Override
     public String videoToMusic(String INPUTPATH) throws Exception {
-
-//        final String outMusicPath = getOutpath();
-//        Runtime runtime = Runtime.getRuntime();
-//        String cut = FFMPEGPATH + " -i " + INPUTPATH + " -vn -codec copy " + outMusicPath;
-//        System.out.println(cut);
-//        log.info("视频,{},转音频任务完成,输出路径,{}", INPUTPATH, outMusicPath);
-//        runtime.exec(cut);
-//        TextToSpeech.textToSpeech("恭喜老板，任务完成");
-        String resultPath = getResult(INPUTPATH);
-
-        return resultPath;
+        return getResult(INPUTPATH);
     }
 
-    public String getResult(String INPUTPATH){
+    public String getResult(String INPUTPATH) {
         final String outMusicPath = getOutpath();
         long l = System.currentTimeMillis();
         List<String> commend = new ArrayList<String>();
@@ -113,7 +111,29 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
         log.info("======视频转语音结果" + (exit == 0 ? true : false));
         long l1 = System.currentTimeMillis();
         log.info("======视频转语音用时：" + (l1 - l));
+        saveConvertInfo(INPUTPATH, outMusicPath);
         return outMusicPath;
+    }
+
+    /**
+     * 保存视频转换记录
+     *
+     * @param inputpath
+     * @param outMusicPath
+     */
+    private void saveConvertInfo(String inputpath, String outMusicPath) {
+        final Query query = new Query();
+        final Criteria criteria = Criteria.where("outPath").is(outMusicPath);
+        query.addCriteria(criteria);
+        ConvertInfo one = mongoTemplate.findOne(query, ConvertInfo.class);
+        if (one == null) {
+            one = new ConvertInfo();
+            one.init();
+        }
+        one.setInputPath(inputpath);
+        one.setOutputPath(outMusicPath);
+        one.update();
+        mongoTemplate.save(one);
     }
 
     static class PrintStream extends Thread {
@@ -147,7 +167,7 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
         //1、创建客户端实例
         LfasrClient lfasrClient = LfasrClient.getInstance(APP_ID, SECRET_KEY);
         //2、上传
-        if (INPUTMUSICPATH==null){
+        if (INPUTMUSICPATH == null) {
             System.out.println("路径为空~");
             return "获取路径为空";
         }
@@ -161,7 +181,7 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
         while (status != 9) {
             Message message = lfasrClient.getProgress(taskId);
             JSONObject object = JSON.parseObject(message.getData());
-            if (object != null){
+            if (object != null) {
                 status = object.getInteger("status");
                 System.out.println(message.getData());
                 TimeUnit.SECONDS.sleep(2);
@@ -206,7 +226,6 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
         return returnResult;
 
     }
-
 
 
     /**
