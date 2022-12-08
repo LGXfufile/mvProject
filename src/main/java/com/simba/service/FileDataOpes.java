@@ -10,7 +10,7 @@ package com.simba.service;
 */
 
 
-import com.simba.pojo.User;
+import com.simba.bean.User;
 
 import java.io.File;
 import java.io.IOException;

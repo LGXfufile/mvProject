@@ -1,5 +1,6 @@
 package com.simba.videoConversion.impl;
 
+import com.simba.service.impl.VideoConversionUtilsImpl;
 import com.simba.tools.TextToSpeech;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -47,5 +48,13 @@ class VideoConversionUtilsImplTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void stringDemo(){
+        String ss = "xxx.yyy.com";
+        final int indexOf = ss.lastIndexOf(".");
+        System.out.println(indexOf);
+        System.out.println(ss.substring(indexOf));
     }
 }

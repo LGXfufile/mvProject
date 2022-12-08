@@ -1,12 +1,24 @@
 package com.simba.controller;
 
+import cn.hutool.http.server.HttpServerRequest;
+import com.simba.bean.VideoRequestDto;
+import com.simba.service.UploadFileWriteService;
+import com.simba.service.VideoTools;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.HttpCookie;
+import java.util.Collection;
+import java.util.Map;
 
 /*
 @Date 2022/10/11 23:47
@@ -19,9 +31,12 @@ import java.io.*;
 @RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
-public class VideoController {
+public class VideoController extends HttpServlet {
 
-    public static final String FILE_PATH = "E:\\javaLearn\\JavaLearning\\simba\\src\\main\\resources\\static\\";
+    @Autowired
+    UploadFileWriteService uploadFileWriteService;
+    @Resource
+    VideoTools videoTools;
 
     /**
      * 实现视频上传功能；
@@ -30,33 +45,42 @@ public class VideoController {
      * @throws Exception
      */
     @PostMapping("/uploadFile")
-    public String uploadFile(MultipartFile file) throws Exception {
-        String originalFilename = file.getOriginalFilename();
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        System.out.println(originalFilename);
-        final byte[] bytes = new byte[1024];
-        try {
-            String absolutePath = FILE_PATH + originalFilename;
-            fos = new FileOutputStream(absolutePath);
-            fis = (FileInputStream) file.getInputStream();
-            int read = fis.read(bytes);
-            while (read!=-1){
-                fos.write(bytes,0,bytes.length);
-                read = fis.read(bytes);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "500";
-        }finally {
-            try {
-                fos.close();
-                fis.close();
-                return "200";
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return "200";
+    public Map<String, String> uploadFile(MultipartFile file) throws Exception {
+        return uploadFileWriteService.save(file);
+    }
+
+    /**
+     * 视频转音频
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/videoToMusicReq")
+    public String videoToMusicReq(MultipartFile file) throws Exception {
+        return uploadFileWriteService.videoToMusic(file);
+    }
+
+    @PostMapping("/videoToText")
+    public String videoToText(MultipartFile file) throws Exception {
+        return uploadFileWriteService.videoToText(file);
+    }
+
+    @PostMapping("/videoDownload")
+    public void videoDownload(@RequestBody VideoRequestDto videoRequestDto) throws Exception {
+        videoTools.videoDownload(videoRequestDto.getVideoTargetUrl());
+    }
+
+    @GetMapping("/getCookiesaaa")
+    public String getCookies(HttpServerRequest request){
+        final Collection<HttpCookie> cookies = request.getCookies();
+        System.out.println(cookies);
+        return null;
+    }
+
+    @GetMapping("/getCookies")
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        final Cookie[] cookies = req.getCookies();
+        System.out.println(cookies);
     }
 }

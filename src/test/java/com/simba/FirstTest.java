@@ -9,29 +9,29 @@ package com.simba;
 @常用快捷键 代码格式化 【CTRL+ALT+L】
 */
 
-import com.simba.tmp.MixedOperation;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import org.junit.jupiter.api.Test;
+
+import java.net.URL;
+
 
 public class FirstTest {
 
-    private MixedOperation mixedOperation;
 
-    @BeforeEach
-    public void init(){
-        mixedOperation = new MixedOperation();
-    }
     @Test
-    public void sucessTest(){
-        int result = mixedOperation.mixedOperation(4,2);
-        Assertions.assertEquals(4,result);
-    }
+    public void getResult() throws Exception {
+        String url = "https://mmzztt.com/photo/tag/meitui/";
+        URL targetUrl = new URL(url);
 
-    public void failedTest(){
-        ArithmeticException arithmeticException = Assertions.assertThrows(
-                ArithmeticException.class, () -> mixedOperation.mixedOperation(4, 0)
-        );
-        Assertions.assertEquals("/ by zero",arithmeticException.getMessage());
+        Document parse = Jsoup.parse(targetUrl, 10000);
+        Elements elementsByClass = parse.getElementsByClass("uk-grid-margin");
+        System.out.println(elementsByClass);
+
+
     }
 }

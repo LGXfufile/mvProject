@@ -2,10 +2,9 @@ package com.simba.mapper;
 
 
 
-import com.simba.pojo.User;
+import com.simba.bean.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 

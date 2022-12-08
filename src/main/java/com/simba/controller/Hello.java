@@ -10,7 +10,7 @@ package com.simba.controller;
 */
 
 import com.simba.bean.YingShi;
-import com.simba.pojo.User;
+import com.simba.bean.User;
 import com.simba.service.FileDataOpes;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;

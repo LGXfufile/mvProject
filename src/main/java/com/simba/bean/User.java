@@ -1,4 +1,4 @@
-package com.simba.pojo;
+package com.simba.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
