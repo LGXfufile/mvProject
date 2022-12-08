@@ -17,6 +17,7 @@ import com.iflytek.msp.lfasr.LfasrClient;
 import com.iflytek.msp.lfasr.model.Message;
 import com.simba.bean.ConvertInfo;
 import com.simba.service.VideoConversionUtils;
+import com.simba.tools.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
 import javax.annotation.Resource;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.util.*;
@@ -40,6 +43,8 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
     private final static String FFMPEGPATH = "E:\\Download\\ffmpeg.exe";
 
     private static String OUTPATHOFMUSIC = "src/main/resources/audio/";
+
+    private static String txtFilePath = "src/main/resources/txfFile/";
 
 //    private final static String INPUTPATH =  "src/main/resources/videos/840946180-1-208.mp4";
 
@@ -121,7 +126,7 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
      * @param inputpath
      * @param outMusicPath
      */
-    private void saveConvertInfo(String inputpath, String outMusicPath) {
+    public void saveConvertInfo(String inputpath, String outMusicPath) {
         final Query query = new Query();
         final Criteria criteria = Criteria.where("outPath").is(outMusicPath);
         query.addCriteria(criteria);
@@ -132,6 +137,7 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
         }
         one.setInputPath(inputpath);
         one.setOutputPath(outMusicPath);
+        one.setDesc("movie to music");
         one.update();
         mongoTemplate.save(one);
     }
@@ -201,11 +207,8 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
         buffer1.append("?");
         buffer1.append("？");
         for (int i = 0; i < array.size(); i++) {
-
             final String s1 = array.get(i).toString();
-
             log.info("分片结果,{}", s1);
-
             final JSONObject jsonObject = JSON.parseObject(s1);
             String onebest = jsonObject.get("onebest").toString().trim();
             if (onebest.length() > 1) {
@@ -220,13 +223,27 @@ public class VideoConversionUtilsImpl implements VideoConversionUtils {
         }
         returnResult = buffer.toString();
         log.info("音频转文字任务结束,输入,{},输出,\n{}", INPUTMUSICPATH, buffer.toString());
-        //退出程序，关闭线程资源，仅在测试main方法时使用。
-        System.exit(0);
-        log.info("返回了吗？");
-        return returnResult;
-
+        return saveVideoToTxtInfo(returnResult);
     }
 
+    /**
+     * 保存转化记录
+     *
+     * @param returnResult
+     * @throws IOException
+     * @return
+     */
+    private String saveVideoToTxtInfo(String returnResult) throws IOException {
+
+        String randomId = CommonUtils.getRandomId();
+        String path = "src/main/resources/txfFile/"+randomId+".txt";
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path));
+        bufferedWriter.write(returnResult);
+        System.out.println("end");
+        bufferedWriter.close();
+        return path;
+
+    }
 
     /**
      * 获取输出路径

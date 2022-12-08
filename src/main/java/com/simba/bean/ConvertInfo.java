@@ -23,6 +23,8 @@ public class ConvertInfo {
 
     private String outputPath;
 
+    private String desc;
+
     private String createTime;
 
     private String updateTime;
