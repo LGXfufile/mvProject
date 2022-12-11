@@ -45,7 +45,7 @@ public class FileDataOpesImpl implements FileDataOpes {
     int countOfTxt = 0;
     int countOfDocx = 0;
 
-    private static final Map<String,List<User>> cacheMaps = new HashMap<>();
+    private static final Map<String, List<User>> cacheMaps = new HashMap<>();
 
 
     @Override
@@ -64,13 +64,13 @@ public class FileDataOpesImpl implements FileDataOpes {
                 String fileName = fs.getName();
                 int indexOf = fileName.lastIndexOf(".");
                 String wenjianhouzhui = fileName.substring(indexOf + 1);
-                if (fs!=null&&fs.length()!=0&&"txt".equals(wenjianhouzhui)) {
+                if (fs != null && fs.length() != 0 && "txt".equals(wenjianhouzhui)) {
                     countOfTxt++;
-                //如果不是utf8格式，则转为utf8
+                    //如果不是utf8格式，则转为utf8
                     String absolutePath = fs.getAbsolutePath();
                     System.out.println(absolutePath);
                     String fileEncode = EncodingDetect.getJavaEncode(absolutePath);
-                    System.out.println("该文件编码是： "+fileEncode);
+                    System.out.println("该文件编码是： " + fileEncode);
                     if (!"UTF-8".equals(fileEncode)) {
 //          调用转码方法
                         convertCharset(absolutePath, Charset.forName(fileEncode), Charset.forName("UTF-8"), null);
@@ -79,8 +79,8 @@ public class FileDataOpesImpl implements FileDataOpes {
                 } else if (fileName.endsWith(".docx")) {
                     countOfDocx++;
                     fileEndWithDocxInsertTool(fs);
-                }else {
-                    System.out.println("文件名是--->"+fileName);
+                } else {
+                    System.out.println("文件名是--->" + fileName);
                 }
             }
 
@@ -99,7 +99,8 @@ public class FileDataOpesImpl implements FileDataOpes {
 
 
     /**
-     *  如果文件后缀名是txt，插入数据库工具
+     * 如果文件后缀名是txt，插入数据库工具
+     *
      * @param fs
      * @throws IOException
      */
@@ -115,7 +116,7 @@ public class FileDataOpesImpl implements FileDataOpes {
         int indexOf = fileName.lastIndexOf(".");
         String fileNothouzhui = fileName.substring(0, indexOf);
         String createTime = formatDate.dateFormatOfNow();
-        User user = new User( countOfTxt,fileNothouzhui, result.toString(),createTime);
+        User user = new User(countOfTxt, fileNothouzhui, result.toString(), createTime);
         System.out.println(user.toString());
         if (userMapper.addUser(user)) {
             System.out.println("插入成功:" + countOfTxt);
@@ -123,9 +124,7 @@ public class FileDataOpesImpl implements FileDataOpes {
     }
 
 
-
     /**
-     *
      * @param srcFile 如果文件后缀名是docx，插入数据库工具
      * @throws IOException
      */
@@ -138,9 +137,9 @@ public class FileDataOpesImpl implements FileDataOpes {
         String context = extractor.getText();
 //                        System.out.println(context);
         int indexof = srcFile.getName().lastIndexOf(".");
-        String fileNothouzhui = srcFile.getName().substring(0,indexof);
+        String fileNothouzhui = srcFile.getName().substring(0, indexof);
         String createTime = formatDate.dateFormatOfNow();
-        User user = new User(countOfDocx,fileNothouzhui, context,createTime);
+        User user = new User(countOfDocx, fileNothouzhui, context, createTime);
         if (userMapper.addUser(user)) {
             System.out.println("插入成功:" + countOfDocx);
         }
@@ -148,14 +147,15 @@ public class FileDataOpesImpl implements FileDataOpes {
     }
 
     @Override
-    public List<User> queryUserById (User user){
+    public List<User> queryUserById(User user) {
 
         List<User> users = userMapper.queryUserById(user);
         return users;
     }
+
     @Override
     @Cacheable(value = "users")
-    public List<User> queryUserAll () {
+    public List<User> queryUserAll() {
 
 //        List<User> users;
 //

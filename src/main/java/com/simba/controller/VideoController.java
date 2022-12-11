@@ -1,10 +1,14 @@
 package com.simba.controller;
 
 import cn.hutool.http.server.HttpServerRequest;
+import com.simba.bean.KeyWordRequest;
+import com.simba.bean.SearchResultInfo;
 import com.simba.bean.VideoRequestDto;
+import com.simba.service.SearchKeyWords;
 import com.simba.service.UploadFileWriteService;
 import com.simba.service.VideoTools;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpCookie;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -31,12 +36,15 @@ import java.util.Map;
 @RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class VideoController extends HttpServlet {
 
-    @Autowired
+    @Resource
     UploadFileWriteService uploadFileWriteService;
     @Resource
     VideoTools videoTools;
+
+
 
     /**
      * 实现视频上传功能；
