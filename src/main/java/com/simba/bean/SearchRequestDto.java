@@ -14,6 +14,7 @@ import lombok.Data;
 @Data
 public class SearchRequestDto {
     private String keyWord;
+    private String searchKeyWord;
     private Integer pageSize;
     private Integer currentPage;
 }

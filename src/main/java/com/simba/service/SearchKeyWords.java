@@ -19,6 +19,7 @@ import java.util.Map;
 
 public interface SearchKeyWords {
     SearchResponseDto queryAllExtendWords(SearchRequestDto searchRequestDto) throws IOException;
+    SearchResponseDto queryKeyWords(SearchRequestDto searchRequestDto);
     Map<String, String> writeKeyWords(String keyWord) throws Exception;
     void modifyData(SearchResultInfo searchResultInfo);
 }

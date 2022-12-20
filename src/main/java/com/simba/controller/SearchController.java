@@ -29,9 +29,14 @@ public class SearchController {
     @Resource
     SearchKeyWords searchKeyWords;
 
+    @RequestMapping("/getAllExtendWords")
+    public SearchResponseDto queryAllExtendWords(@RequestBody SearchRequestDto searchRequestDto) throws IOException {
+        return searchKeyWords.queryAllExtendWords(searchRequestDto);
+    }
+
     @RequestMapping("/getKeyWords")
     public SearchResponseDto getKeyWords(@RequestBody SearchRequestDto searchRequestDto) throws IOException {
-        return searchKeyWords.queryAllExtendWords(searchRequestDto);
+        return searchKeyWords.queryKeyWords(searchRequestDto);
     }
 
     @RequestMapping("/writeKeyWordData")

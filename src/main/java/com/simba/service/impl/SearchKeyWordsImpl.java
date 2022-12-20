@@ -13,6 +13,7 @@ package com.simba.service.impl;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.simba.bean.KeyWordInfo;
 import com.simba.bean.SearchRequestDto;
 import com.simba.bean.SearchResponseDto;
 import com.simba.bean.SearchResultInfo;
@@ -30,10 +31,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
@@ -56,17 +54,51 @@ public class SearchKeyWordsImpl implements SearchKeyWords {
             Pattern pattern = Pattern.compile("^.*" + searchRequestDto.getKeyWord() + ".*$", Pattern.CASE_INSENSITIVE);
             query.addCriteria(new Criteria().and("keyWord").regex(pattern));
         }
+        if (StringUtils.hasText(searchRequestDto.getSearchKeyWord())) {
+            Pattern pattern = Pattern.compile("^.*" + searchRequestDto.getSearchKeyWord() + ".*$", Pattern.CASE_INSENSITIVE);
+            query.addCriteria(new Criteria().and("searchKeyWord").regex(pattern));
+        }
         long totalCount = mongoTemplate.count(query, SearchResultInfo.class);
 
 //        数据查询起始数
-        query.skip((searchRequestDto.getCurrentPage()-1)*searchRequestDto.getPageSize());
+        query.skip((searchRequestDto.getCurrentPage() - 1) * searchRequestDto.getPageSize());
         query.limit(searchRequestDto.getPageSize());
         List<SearchResultInfo> searchResultInfos = mongoTemplate.find(query, SearchResultInfo.class);
+
+        List<Object> list = new ArrayList<>();
+        searchResultInfos.stream().forEach(x -> list.add(x.getSearchKeyWord()));
+
+        log.info("查询结果,{}", list.toString());
 
         response.setTotalCount(totalCount);
         response.setCurrentPage(searchRequestDto.getCurrentPage());
         response.setPageSize(searchRequestDto.getPageSize());
         response.setItems(searchResultInfos);
+
+        return response;
+    }
+
+    @Override
+    public SearchResponseDto queryKeyWords(SearchRequestDto searchRequestDto) {
+        SearchResponseDto response = new SearchResponseDto();
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("fg").is(1));
+        query.with(Sort.by(Sort.Order.desc("keyWord")));
+        if (StringUtils.hasText(searchRequestDto.getKeyWord())) {
+            Pattern pattern = Pattern.compile("^.*" + searchRequestDto.getKeyWord() + ".*$", Pattern.CASE_INSENSITIVE);
+            query.addCriteria(new Criteria().and("keyWord").regex(pattern));
+        }
+        long totalCount = mongoTemplate.count(query, KeyWordInfo.class);
+
+//        数据查询起始数
+        query.skip((searchRequestDto.getCurrentPage() - 1) * searchRequestDto.getPageSize());
+        query.limit(searchRequestDto.getPageSize());
+        final List<KeyWordInfo> keyWordInfos = mongoTemplate.find(query, KeyWordInfo.class);
+
+        response.setTotalCount(totalCount);
+        response.setCurrentPage(searchRequestDto.getCurrentPage());
+        response.setPageSize(searchRequestDto.getPageSize());
+        response.setItems(keyWordInfos);
 
         return response;
     }
@@ -80,6 +112,8 @@ public class SearchKeyWordsImpl implements SearchKeyWords {
         AtomicInteger count = new AtomicInteger();
         final long start = new Date().getTime();
 
+        List<Object> list = new ArrayList<>();
+
         for (String s : arr) {
             for (int i = 0; i < 26; i++) {
                 char c = (char) ('a' + i);
@@ -89,17 +123,26 @@ public class SearchKeyWordsImpl implements SearchKeyWords {
                 String text = parse.text();
                 String vv = "window.baidu.sug(";
                 final String substring = text.substring(vv.length(), text.length() - 2);
-                final JSONObject jsonObject = JSONUtil.parseObj(substring);
+                JSONObject jsonObject = null;
+                if (substring.endsWith("}")){
+                    jsonObject = JSONUtil.parseObj(substring);
+                }else{
+                    log.error("JSON解析异常，不处理，跳过，异常信息{}",substring);
+                    continue;
+                }
                 final Object s1 = jsonObject.get("s");
                 final JSONArray objects = JSONUtil.parseArray(s1);
                 String finalSubKeyWord = subKeyWord;
                 objects.stream().forEach(x -> {
-                    System.out.println(x);
+                    log.info("{}", x);
+                    list.add(x);
                     saveSearchInfo(keyWord, finalSubKeyWord, x);
+                    saveKeyWord(keyWord);
                     count.getAndIncrement();
                 });
             }
         }
+        log.info("写入结果,{}",list.toString());
         long end = new Date().getTime();
         long ss = (end - start) / 1000;
         log.info("写入数据条数:{}", count);
@@ -108,6 +151,21 @@ public class SearchKeyWordsImpl implements SearchKeyWords {
         map.put("data", "success");
         map.put("code", "200");
         return map;
+    }
+
+    private void saveKeyWord(String keyWord) {
+        final Query query = new Query();
+        final Criteria criteria = Criteria.where("keyWord").is(keyWord);
+        query.addCriteria(criteria);
+        KeyWordInfo one = mongoTemplate.findOne(query, KeyWordInfo.class);
+        if (one == null) {
+            one = new KeyWordInfo();
+            one.init();
+            one.setKeyWord(keyWord);
+            log.info("keyWordsInfo,初始化成功,{}", one.getKeyWord());
+            mongoTemplate.save(one);
+        }
+        return;
     }
 
     @Override
@@ -120,7 +178,7 @@ public class SearchKeyWordsImpl implements SearchKeyWords {
         SearchResultInfo one = mongoTemplate.findOne(query, SearchResultInfo.class);
         if (one != null) {
             one.setFg(0);
-            log.info("数据修改成功,修改结果,{},{}", one.getSearchKeyWord(), one.getFg());
+            log.info("数据修改成功,修改结果,{},fg = {}", one.getSearchKeyWord(), one.getFg());
             mongoTemplate.save(one);
         }
 
